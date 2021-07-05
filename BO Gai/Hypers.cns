@@ -1,0 +1,657 @@
+;---------------------------------------------------------------------------
+;Stagger Punch
+[Statedef 3000]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+anim = 3000
+ctrl = 0
+sprpriority = 2
+
+[state 3000 superfx]
+type = explod
+triggerall = numexplod(10004) = 0
+trigger1 = animelem = 5
+anim = 10004
+ID = 10004
+pos = -5,-50
+supermovetime = 41
+scale = 0.5,0.5
+ontop = 1
+ownpal = 1
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = animelem = 4
+value = 2300,0
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = animelem = 5
+value = 3000,0
+
+[State 3000 superpause]
+type = SuperPause
+time = 65
+anim = -1
+trigger1 = animelem = 5
+p2defmul = 1
+sound = S2100,0
+
+[State 3000 drain power]
+type = PowerAdd
+trigger1 = animelem = 5
+value = -1000
+
+[State 3000]
+type = ChangeState
+trigger1 = animtime = 0
+value = 3001
+ctrl = 0
+
+;---------------------------------------------------------------------------
+[Statedef 3001]
+type    = S
+movetype= I
+physics = S
+anim = 3001
+
+[state 3001 create potency]
+type = varset
+trigger1 = time = 1
+fvar(3) = 0
+
+[state 3001 add to potency]
+type = varadd
+trigger1 = command = "holdguard"
+trigger1 = time > 1
+fvar(3) = .2
+
+[state 3001]
+type = ctrlset
+trigger1 = 1
+value = 0
+
+[state 3001 glow based on potency]
+type = helper
+triggerall = numhelper(30015) = 0
+trigger1 = time = 1
+name = "glow"
+ID = 30015
+pos = -1,-1
+postype = p1
+stateno = 30015
+ownpal = 1
+
+[State 3001]
+type = changestate
+trigger1 = command != "holdguard"
+trigger2 = fvar(3) >= 100
+value = 3002
+
+;-----------------
+;Helper glow
+[statedef 30015]
+type = U
+movetype = I
+physics = N
+anim = parent,anim
+
+[State 30015]
+type = nothitby
+trigger1 = 1
+value = SCA,NA,SA,HA
+time = -1
+
+[state 30015]
+type = assertSpecial
+trigger1 = 1
+flag = noshadow
+
+[state 30015]
+type = angledraw
+triggerall = parent, stateno = [3001,3002]
+trigger1 = parent, fvar(3) > 0
+scale = (1+(.00015*(time-0))),(1+(.00015*(time-0)))
+
+[state 30015 palfx]
+type = palfx
+trigger1 = time = 1
+time = -1
+add = 170,170,170
+mul = 256,256,256
+sinadd = -80,-80,-80,25
+color = 0
+invertall = 0
+
+[state 30015 bind]
+Type = BindToRoot
+Trigger1 = 1
+Time = 1
+Facing = 1
+Pos = 0, 0
+ignorehitpause=1
+
+[State 30015, HitOverride]
+Type = HitOverride
+Trigger1 = 1
+Attr = SCA, AA, AP , AT
+StateNo = 30015
+Time = 1
+ForceAir = 0
+ignorehitpause=1
+
+[state 30015]
+type = changeanim
+trigger1 = parent, anim = 3002
+value = 3002
+
+[state 30015 end]
+type = destroyself
+trigger1 = parent, movehit
+trigger2 = parent, animelem = 3
+
+;------------------
+;Superarmor helper by Seravy
+[StateDef 11777]
+Type = U
+MoveType = H
+Physics = N
+ctrl=0
+
+[State 11777]
+Type=StateTypeSet ; You want to mimic the statetype of the player, to let the correct types of attacks hit only
+Trigger1=root,statetype=A
+Statetype=A
+
+[State 6965]
+Type=ChangeAnim ; Helper copies the animation of the player.
+Trigger1=anim!=Root,anim
+value=Root,anim
+ignorehitpause=1
+
+[State 6965]
+Type=Assertspecial ; But is invisible
+Trigger1=1
+flag=invisible
+flag2=noshadow
+ignorehitpause=1
+
+[State 6965, HitOverride]
+Type = HitOverride
+Trigger1 = 1
+Attr = SCA, AA, AP , AT
+StateNo = 11777
+Time = 1
+ForceAir = 0
+ignorehitpause=1
+
+[State 6965, BindToRoot]
+Type = BindToRoot
+Trigger1 = 1
+Time = 1
+Facing = 1
+Pos = 0, 0
+ignorehitpause=1
+
+[State 6966, ParentVarAdd]
+Type = ParentVarAdd
+Trigger1 = Time = 0
+fV = 29
+Value = GetHitVar(damage)
+ignorehitpause=1
+
+[State 6966, ParentVarAdd]
+Type=Hitfallset
+Trigger1=1
+value=0
+
+[State 6965, DestroySelf]
+Type = DestroySelf
+Trigger1 = parent, stateno != 3001 ;Superarmor ending condition.
+ignorehitpause=1
+
+;---------------------------------------------------------------------------
+[Statedef 3002]
+type = S
+movetype = A
+physics = S
+anim = 3002
+
+[State 3002]
+type = HitDef
+trigger1 = Animelem = 3
+attr = S, HA
+animtype  = Hard
+damage    = cond(fvar(3) > 50,(ceil(3.5*fvar(3))),175)
+getpower  = 0
+priority  = 2
+pausetime = 15,25
+sparkno = s10005+(random%3)
+sparkxy = -5,-40
+hitsound   = S2100,1
+guardsound = 6,0
+ground.type = Low
+ground.slidetime = 25
+ground.hittime  = 14
+ground.velocity = -3
+
+[state 3002]
+type = changestate
+trigger1 = animtime = 0
+value = 3003
+
+;---------------------------------------------------------------------------
+[Statedef 3003]
+type = S
+movetype = A
+physics = S
+anim = 3003
+
+[state 3003]
+type = varset
+trigger1 = time = 1
+fvar(3) = 0
+
+[state 3003]
+type = changestate
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;BEATDOWN
+[Statedef 3048]
+type    = S
+movetype= I
+physics = S
+velset = 0,0
+anim = 3000
+ctrl = 0
+sprpriority = 2
+
+[state 3000 superfx]
+type = explod
+triggerall = numexplod(10004) = 0
+trigger1 = animelem = 5
+anim = 10004
+ID = 10004
+pos = -5,-50
+supermovetime = 41
+scale = 0.5,0.5
+ontop = 1
+ownpal = 1
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = animelem = 4
+value = 2300,0
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = animelem = 5
+value = 3000,0
+
+[State 3000 superpause]
+type = SuperPause
+time = 65
+anim = -1
+trigger1 = animelem = 5
+p2defmul = 1
+sound = S2100,0
+
+[State 3000 drain power]
+type = PowerAdd
+trigger1 = animelem = 5
+value = -3000
+
+[State 3049]
+type = changestate
+trigger1 = enemy,alive = 0
+;trigger1 = Frontedgedist <= 0
+value = 0
+ctrl = 1
+
+[State 3000]
+type = ChangeState
+trigger1 = animtime = 0
+value = 3049
+ctrl = 0
+;-----------------------------------------------------------------------------
+[statedef 3049]
+type = S
+movetype = A
+Physics = S
+anim = 3049
+
+[state 3049]
+type = assertspecial
+trigger1 = 1
+flag = noautoturn
+
+[state 3049]
+type = velset
+trigger1 = time > 0
+x = ceil(const(velocity.run.fwd.x)*1.5)
+
+[state 3049]
+type = hitdef
+trigger1 = 1
+attr = S, HA
+animtype = hard
+damage = 0
+getpower = 0
+pausetime = 0,0
+sparkno = s10005+(random%3)
+sparkxy = 0,-70
+numhits = 0
+hitsound   = S1100,1
+ground.type = low
+ground.slidetime = 0
+ground.hittime  = 20
+ground.velocity = 0
+p1stateno = 3050
+forcestand = 1
+
+[State 3049]
+type = changestate
+trigger1 = Frontedgedist < 30
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------
+[statedef 3050]
+type = S
+movetype = A
+physics = S
+anim = 3050
+
+[State 230, 1]
+type = HitDef
+trigger1 = animelem = 2
+attr = S, NA
+animtype  = Light
+damage    = ceil(34*1.5)
+getpower = 0
+guardflag = MA
+pausetime = 7,12
+sparkno = s10005+(random%3)
+sparkxy = -20,-65
+hitsound   = S390,0
+guardsound = 6,0
+ground.type = High
+ground.slidetime = 7
+ground.hittime  = 30
+ground.velocity = -2
+air.velocity = -2.5,-3.5
+
+[State 241, 2]
+type = HitDef
+trigger1 = animelem = 6
+attr = S, NA
+animtype  = Medium
+damage    = ceil(84*1.5)
+getpower = 0
+guardflag = MA
+pausetime = 8,12
+hitsound   = S440,0
+sparkno = s10005+(random%3)
+sparkxy = -25,-70
+guardsound = 6,0
+ground.type = High
+ground.slidetime = 8
+ground.hittime  = 30
+ground.velocity = -2
+air.velocity = -2.2,-4.2
+
+[State 232, 1]
+type = HitDef
+trigger1 = animelem = 16
+attr = S, NA
+animtype  = Light
+damage    = ceil(30*1.5)
+getpower = 0
+guardflag = MA
+pausetime = 8,12
+sparkno = s10005+(random%3)
+sparkxy = -12,-32
+hitsound   = S430,0
+guardsound = 6,0
+ground.type = Low
+ground.slidetime = 4
+ground.hittime  = 30
+ground.velocity = -2
+
+[State 1050 hit]
+type = HitDef
+trigger1 = Animelem = 22
+attr = S, SA
+animtype  = hard
+damage    = ceil(105*1.5)
+getpower  = 0
+priority  = 6
+guardflag = MA
+pausetime = 15,20
+hitsound   = S430,0
+guardsound = 6,0
+sparkno = s10005+(random%3)
+sparkxy = -10,-65
+ground.type = low
+ground.slidetime = 10
+ground.hittime  = 30
+ground.velocity = -3
+ground.cornerpush.veloff = -3
+
+[State 3050]
+type = PlaySnd
+trigger1 = AnimElem = 29
+value = S3050, 0
+
+[State 233, 1]
+type = HitDef
+trigger1 = animelem = 29
+attr = S, NA
+animtype  = medium
+damage    = ceil(70*1.5)
+getpower = 0
+guardflag = MA
+pausetime = 12,12
+sparkno = s10005+(random%3)
+sparkxy = -10,-50
+hitsound   = S430,0
+guardsound = 6,0
+ground.type = Low
+ground.slidetime = 12
+ground.hittime  = 30
+ground.velocity = 6
+
+[State 233, 1]
+type = HitDef
+trigger1 = animelem = 30
+attr = S, NA
+animtype  = up
+damage    = ceil(150*1.5)
+getpower = 0
+guardflag = MA
+pausetime = 12,12
+sparkno = s10005+(random%3)
+sparkxy = -20,-70
+hitsound   = S440,0
+guardsound = 6,0
+ground.type = high
+ground.slidetime = 7
+air.hittime  = 20
+ground.velocity = -2.2, -10
+ground.cornerpush.veloff = -10
+fall.damage = ceil(90*2)
+fall = 1
+fall.recover = 0
+
+[state 3050]
+type = velset
+trigger1 = time > 0 && time < 20
+x = 2
+
+[state 3050]
+type = velset
+trigger1 = time > 20 && time < 30
+x = 2
+
+[state 3050]
+type = velset
+trigger1 = time > 40 && time < 60
+x = 1
+
+[state 3050]
+type = velset
+trigger1 = time > 62 && time < 80
+x = 1.75
+
+[state 3050]
+type = changestate
+trigger1 = animtime = 0
+value = 3051
+
+;---------------------------------------------------------------
+[statedef 3051]
+type = S
+movetype = A
+Physics = S
+anim = 10
+
+[State 820, 1]
+type = ChangeAnim
+Trigger1 = Time = 15
+value = 11
+
+[State 820, 1]
+type = ChangeAnim
+Trigger1 = Time = 20
+value = 3049
+
+[state 3049]
+type = assertspecial
+trigger1 = 1
+flag = noautoturn
+
+[state 3049 vel if enemy is far away]
+type = velset
+triggerall = p2bodydist x < 5 && p2bodydist x > 1
+trigger1 = time > 20
+x = ceil(frontedgebodydist*.2)
+
+[state 3049 vel if enemy is close]
+type = velset
+triggerall = p2bodydist x > 5
+trigger1 = time > 20
+x = ceil(p2bodydist x*.5)
+
+[state 3049 vel if right under enemy]
+type = velset
+triggerall = p2bodydist x <= 0.25
+trigger1 = time > 20
+x = ceil(const(velocity.run.fwd.x)*.5)
+
+[State 1080]
+type = PlaySnd
+trigger1 = time = 18
+value = S3050, 2
+
+[state 3049]
+type = hitdef
+trigger1 = 1
+attr = S, HA
+animtype = hard
+damage = 0
+getpower = 0
+numhits = 0
+pausetime = 0,0
+sparkno = s10005+(random%3)
+sparkxy = 0,-70
+hitsound   = S1100,1
+ground.type = low
+ground.slidetime = 0
+ground.hittime  = 20
+ground.velocity = 0
+p1stateno = 3052
+
+[State 3049]
+type = changestate
+triggerall = enemy,alive = 1
+trigger1 = Frontedgedist <= 0
+value = 0
+ctrl = 1
+
+[State 3049]
+type = changestate
+trigger1 = enemy,alive = 0
+;trigger1 = Frontedgedist <= 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------
+[statedef 3052]
+Type = S
+movetype = A
+physics = S
+anim = 810
+
+[State 810, Grab Sound]
+type = PlaySnd
+trigger1 = AnimElem = 1
+value = S330, 0
+
+[State 1080]
+type = PlaySnd
+trigger1 = time = 10
+value = S3050, 3
+
+[State 810, Throw Sound]
+type = PlaySnd
+trigger1 = AnimElem = 4
+value = S440, 0
+
+[State 810, Bind 1]
+type = TargetBind
+trigger1 = AnimElemTime(2) < 0
+pos = 0, 0
+
+[State 810, Width 2-11]
+type = Width
+trigger1 = AnimElemTime(2) >= 0 && AnimElemTime(12) < 0
+edge = 20,0
+
+[State 810, Hurt 11]
+type = TargetLifeAdd
+trigger1 = AnimElem = 4
+value = -90*2
+
+[State 810, Throw 11]
+type = TargetState
+trigger1 = AnimElem = 1
+value = 3053
+
+[State 810, State End]
+type = ChangeState
+trigger1 = AnimTime = 0
+value = 195
+ctrl = 0
+
+;------------------------------------------------------------------------
+[statedef 3053]
+type = S
+movetype = H
+physics = S
+velset = 0,0
+;anim = 5010
+
+[State 820, 1]
+type = ChangeAnim
+Trigger1 = Time = 0
+value = 820
+
+[state 3051]
+type = changestate
+trigger1 = time = 26
+value = 821

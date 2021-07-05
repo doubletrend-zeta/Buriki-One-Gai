@@ -1,0 +1,711 @@
+;===========================================================================
+;Grappling states
+;---------------------------------------------------------------------------
+;Grapple - Balance Gague test
+[Statedef 6000]
+type    = S
+movetype= A
+physics = N
+anim = 6000
+sprpriority = -1
+
+[State 6000, Bind]
+type = TargetBind
+trigger1 = time = 0
+pos = 0, 0
+
+[state 6000]
+type = explod
+trigger1 = numexplod(6003) = 0
+trigger1 = time = 0
+anim = 6003
+ID = 6003
+pos = 0,0
+sprpriority = 2
+
+[State 6000]
+type = changestate
+trigger1 = var(47) <= 60
+value = 6102
+
+[State 6000]
+type = changestate
+trigger1 = p2stateno = 6101
+value = 6103
+
+;---------------------------------------------------------------------------
+;Grapple Attack 1
+[Statedef 6001]
+type = S
+movetype = A
+physics = N
+anim = 6001
+
+[State 6001 Hit Sound]
+type = PlaySnd
+trigger1 = AnimElem = 2
+value = S440, 0
+
+[state 6001 spark]
+type = explod
+Triggerall = enemy,alive = 1
+triggerall = numexplod(10005) = 0
+trigger1 = time = 4
+anim = 10005+(random%3)
+pos = 0,-70
+ID = 10005
+ownpal = 1
+ontop = 1
+
+[state 6001 hit]
+type = targetlifeAdd
+trigger1 = animelem = 2
+value = -35
+
+[state 6001 p2 hit anim]
+type = targetstate
+trigger1 = time = 4
+value = 6051
+
+[state 6001]
+type = explod
+trigger1 = numexplod(6002) = 0
+trigger1 = time = 0
+anim = 6002
+ID = 6002
+pos = 0,0
+sprpriority = 2
+
+[state 6001]
+type = removeexplod
+trigger1 = stateno != 6001
+ID = 6002
+
+[state 6001]
+type = removeexplod
+trigger1 = time = 0
+ID = 6003
+
+[state 6001 return]
+type = changeState
+trigger1 = animtime = 0
+value = 6000
+
+;---------------------------------------------------------------------------
+;Saddle
+[Statedef 6002]
+type    = S
+movetype= A
+physics = N
+anim = 6004
+sprpriority = -1
+
+[state 6002]
+type = envcolor
+triggerall = prevstateno != 6003
+trigger1 = time = 0
+value = 0,0,0
+time = 5
+
+[state 6002]
+type = posadd
+triggerall = prevstateno != 6003
+trigger1 = time = 0
+x = 20
+y = -5
+
+[state 6002]
+type = explod
+trigger1 = numexplod(6005) = 0
+trigger1 = time = 0
+anim = 6005
+ID = 6005
+pos = 0,0
+sprpriority = 2
+
+[state 6002]
+type = removeexplod
+trigger1 = time = 0
+ID = 6003
+
+[State 6002]
+type = changestate
+trigger1 = var(47) <= 60
+value = 6102
+
+[State 6002]
+type = changestate
+trigger1 = p2stateno = 6101
+value = 6103
+
+;----------------------------------------------------------------------------
+;Grapple Attack 2
+[Statedef 6003]
+type = S
+movetype = A
+physics = N
+anim = 6006
+sprpriority = -1
+
+[State 6003 Hit Sound]
+type = PlaySnd
+trigger1 = AnimElem = 2
+value = S440, 0
+
+[state 6003 spark]
+type = explod
+Triggerall = enemy,alive = 1
+triggerall = numexplod(10005) = 0
+trigger1 = time = 4
+anim = 10005+(random%3)
+pos = 0,-70
+ID = 10005
+ownpal = 1
+ontop = 1
+
+[state 6003 hit]
+type = targetlifeAdd
+trigger1 = animelem = 2
+value = -35
+
+[state 6003 p2 hit anim]
+type = targetstate
+trigger1 = time = 4
+value = 6051
+
+[state 6003]
+type = explod
+trigger1 = numexplod(6007) = 0
+trigger1 = time = 0
+anim = 6007
+ID = 6007
+pos = 0,0
+sprpriority = 2
+
+[state 6003]
+type = removeexplod
+trigger1 = stateno != 6003
+ID = 6007
+
+[state 6003]
+type = removeexplod
+trigger1 = time = 0
+ID = 6005
+
+[state 6003 return]
+type = changeState
+trigger1 = animtime = 0
+value = 6002
+
+;---------------------------------------------------------------------------
+;Saddle for Non-Buriki Characters
+[Statedef 1212121212]
+type    = S
+movetype= A
+physics = N
+anim = 6004
+sprpriority = -1
+
+[state 6002]
+type = envcolor
+triggerall = prevstateno != 1313131313
+trigger1 = time = 0
+value = 0,0,0
+time = 5
+
+[state 6002 velset if combo'd into]
+type = velset
+triggerall = prevstateno = 1000
+trigger1 = time = 0
+x = 0
+y = 0
+
+[state 6002 posset if combo'd into]
+type = posadd
+triggerall = prevstateno = 1000
+trigger1 = time = 0
+x = 20
+y = 13
+
+[state 6002 targetstate if combo'd into]
+type = targetstate
+triggerall = prevstateno = 1000
+trigger1 = time = 0
+value = 6052
+
+[State 6002 Bind if combo'd into]
+type = TargetBind
+triggerall = prevstateno = 1000
+trigger1 = time = 0
+pos = -20, (Pos Y < Pos Y - ScreenPos Y + GameHeight) + 5
+
+[state 6002]
+type = posadd
+triggerall = prevstateno != 1313131313
+trigger1 = time = 0
+x = 20
+y = -5
+
+[state 6002]
+type = explod
+trigger1 = numexplod(6005) = 0
+trigger1 = time = 0
+anim = 6005
+ID = 6005
+pos = 0,0
+sprpriority = 2
+
+[state 6002]
+type = removeexplod
+trigger1 = time = 0
+ID = 6003
+
+;----------------------------------------------------------------------------
+;Grapple Attack 2 NON BURIKI
+[Statedef 1313131313]
+type = S
+movetype = A
+physics = N
+anim = 6006
+sprpriority = -1
+
+[State 6003 Hit Sound]
+type = PlaySnd
+trigger1 = AnimElem = 2
+value = S440, 0
+
+[state 6003 spark]
+type = explod
+Triggerall = enemy,alive = 1
+triggerall = numexplod(10005) = 0
+trigger1 = time = 4
+anim = 10005+(random%3)
+pos = 0,-70
+ID = 10005
+ownpal = 1
+ontop = 1
+
+[state 6003 hit]
+type = targetlifeAdd
+trigger1 = animelem = 2
+value = -35
+
+[state 6003 p2 hit anim]
+type = targetstate
+trigger1 = time = 6
+value = 6053
+
+[state 6003]
+type = explod
+trigger1 = numexplod(6007) = 0
+trigger1 = time = 0
+anim = 6007
+ID = 6007
+pos = 0,0
+sprpriority = 2
+
+[state 6003]
+type = removeexplod
+trigger1 = stateno != 1313131313
+ID = 6007
+
+[state 6003]
+type = removeexplod
+trigger1 = time = 0
+ID = 6005
+
+[state 6003 return]
+type = changeState
+trigger1 = animtime = 0
+value = 1414141414
+
+;---------------------------------------------------------------------------
+;Thrown from the Saddle
+[Statedef 6008]
+type = A
+movetype = A
+Physics = N
+anim = 6004
+
+[state 3000]
+type = changeanim
+trigger1 = time = 1
+value = 6008
+
+[state 3000 superfx]
+type = explod
+triggerall = numexplod(10004) = 0
+trigger1 = time = 0
+anim = 10004
+ID = 10004
+pos = -20,-60
+supermovetime = 41
+scale = 0.5,0.5
+ontop = 1
+ownpal = 1
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = time = 0
+value = 2300,0
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = time = 0
+value = 3000,0
+
+[State 3000 superpause]
+type = SuperPause
+time = 65
+anim = -1
+trigger1 = time = 0
+p2defmul = 1
+sound = S2100,0
+
+[State 3000 drain power]
+type = PowerAdd
+trigger1 = time = 0
+value = -2000
+
+[state 6008]
+type = velset
+trigger1 = time = 6
+x = 1.5
+y = -2.9
+
+[state 6008]
+type = veladd
+trigger1 = time > 6 && time < 16
+x = .3
+
+[State 6008, Gravity]
+type = VelAdd
+trigger1 = time > 10 && time < 21
+y = .85
+
+[state 6008]
+type = velset
+trigger1 = animelem = 5
+x = 0
+y = 0
+
+[state 6008]
+type = posset
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 0
+y = 0
+
+[state 6008]
+type = assertspecial
+trigger1 = 1
+flag = noautoturn
+
+[state 6008]
+type = removeexplod
+trigger1 = time = 1
+ID = 6005
+
+[state 6008]
+type = targetbind
+trigger1 = time = 1
+time = 10
+pos = 0,0
+
+[state 6008]
+type = targetstate
+trigger1 = time = 1
+value = 6055
+
+[state 6008]
+type = statetypeset
+trigger1 = animelem = 5
+statetype = S
+physics = S
+
+[state 6008]
+type = changestate
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;Thrown from the Saddle
+[Statedef 1515151515]
+type = A
+movetype = A
+Physics = N
+anim = 6004
+
+[state 3000]
+type = changeanim
+trigger1 = time = 1
+value = 6008
+
+[state 3000 superfx]
+type = explod
+triggerall = numexplod(10004) = 0
+trigger1 = time = 0
+anim = 10004
+ID = 10004
+pos = -20,-60
+supermovetime = 41
+scale = 0.5,0.5
+ontop = 1
+ownpal = 1
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = time = 0
+value = 2300,0
+
+[state 3000 playsnd]
+type = playsnd
+trigger1 = time = 0
+value = 3000,0
+
+[State 3000 superpause]
+type = SuperPause
+time = 65
+anim = -1
+trigger1 = time = 0
+p2defmul = 1
+sound = S2100,0
+
+[State 3000 drain power]
+type = PowerAdd
+trigger1 = time = 0
+value = -2000
+
+[state 6008]
+type = velset
+trigger1 = time = 6
+x = 1.5
+y = -2.9
+
+[state 6008]
+type = veladd
+trigger1 = time > 6 && time < 16
+x = .3
+
+[State 6008, Gravity]
+type = VelAdd
+trigger1 = time > 10 && time < 21
+y = .85
+
+[state 6008]
+type = velset
+trigger1 = animelem = 5
+x = 0
+y = 0
+
+[state 6008]
+type = posset
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 0
+y = 0
+
+[state 6008]
+type = assertspecial
+trigger1 = 1
+flag = noautoturn
+
+[state 6008]
+type = removeexplod
+trigger1 = time = 1
+ID = 6005
+
+[state 6008]
+type = targetbind
+trigger1 = time = 1
+time = 10
+pos = 0,0
+
+[state 6008]
+type = targetstate
+trigger1 = time = 1
+value = 6055
+
+[state 6008]
+type = statetypeset
+trigger1 = animelem = 5
+statetype = S
+physics = S
+
+[state 6008]
+type = changestate
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;NON BURIKI recover
+[Statedef 1414141414]
+type = A
+movetype = A
+Physics = N
+anim = 5210
+
+[state 6009]
+type = velset
+trigger1 = time = 4
+x = 4
+y = -4
+
+[state 6009]
+type = veladd
+trigger1 = time >= 7 && time <= 11
+y = .35
+
+[State 6009, Gravity]
+type = VelAdd
+trigger1 = time >= 12
+y = .85
+
+[state 6008]
+type = assertspecial
+trigger1 = 1
+flag = noautoturn
+
+[State 5210, 5] ;Land on ground
+type = ChangeState
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 0
+value = 52 ;JUMP_LAND
+ctrl = 1
+;---------------------------------------------------------------------------
+;Held by grapple
+[Statedef 6050]
+type    = S
+movetype= H
+physics = N
+velset = 0,0
+anim = 6050
+
+[State 6050 grapple break varset]
+type = varset
+trigger1 = (!time)
+var(20) = 10
+
+[state 6050 varadd]
+type = varadd
+trigger1 = (command = "grapplebreakfwd") || (command = "grapplebreakback") || (command = "grapplebreakfwd2") || (command = "grapplebreakback2")
+var(20) = -1
+
+[State 6050, 1]
+type = ChangeAnim2
+Trigger1 = Time = 0
+value = 6050
+
+[State 6050]
+type = changeState
+trigger1 = var(20) = 0
+value = 6101
+
+[State 6050]
+type = changeState
+trigger1 = var(47) <= 60
+value = 6101
+
+[State 6050 death]
+type = changestate
+trigger1 = alive = 0
+value = 6101
+
+[State 6050 Dont get stuck buddy]
+type = SelfState
+trigger1 = p2movetype != A
+value = 6101
+
+;---------------------------------------------------------------------------
+;Hit in Grapple
+[Statedef 6051]
+type = S
+movetype = H
+physics = N
+velset = 0,0
+
+[state 6051]
+type = changestate
+trigger1 = animtime = 0
+value = 6050
+
+;---------------------------------------------------------------------------
+;Held by grapple NON BURIKI
+[Statedef 6052]
+type    = S
+movetype= H
+physics = N
+velset = 0,0
+
+[State 6050, 1]
+type = ChangeAnim2
+Trigger1 = Time = 0
+value = 6050
+
+[State 6050 Dont get stuck buddy]
+type = SelfState
+trigger1 = p2movetype != A
+value = 5050
+
+;---------------------------------------------------------------------------
+;Hit in Grapple NON BURIKI
+[Statedef 6053]
+type = A
+movetype = H
+physics = N
+velset = 0,0
+
+[state 6051]
+type = changeanim2
+trigger1 = time = 0
+value = 820
+
+[State 821, 4]
+type = SelfState
+triggerall = alive = 1
+trigger1 = animelem = 5
+value = 5110
+ctrl = 1
+
+[state 6101]
+type = selfstate
+triggerall = alive = 0
+trigger1 = animelem = 5
+value = 5150
+ctrl = 1
+
+;----------------------------------------------------------------------------
+;Thrown from the Saddle
+[statedef 6055]
+type = A
+movetype = H
+physics = N
+velset = 0,0
+ctrl = 0
+
+[state 6055]
+type = changeanim2
+trigger1 = time = 0
+value = 6055
+
+[state 6055]
+type = velset
+trigger1 = time = 9
+x = -5
+y = -7
+
+[State 6055, Gravity]
+type = VelAdd
+trigger1 = time > 15
+y = .85
+
+[state 6055]
+type = lifeadd
+trigger1 = animelem = 3
+value = -300 + floor(-(vel y*vel x)*1.5)
+
+[State 6055]
+type = SelfState
+trigger1 = Vel Y > 0
+trigger1 = Pos Y >= 0
+value = 5100

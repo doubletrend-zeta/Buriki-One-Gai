@@ -1,0 +1,91 @@
+Unlike Judges' Decision, the Balance Gauge's effects are only active when fighting other Buriki One
+styled characters. This is mostly to prevent variable overlap, but I'm not too sure how much it could
+leak over. I've written about 4 failsafes in this system (p2name, targethelperid, animexist, authorname)
+to minimize the chances of variable overlap.
+
+I can say with 95% confidence (percent error of plus or minus 10%) that it should work smoothly; however,
+extra precautions can be taken by voiding the trigger in the state if the player does not feel that it is
+safe enough. Data fluctuates, I can never be 100% certain it will always be safe, but I firmly believe
+I've minimized the chance of variable overlap to the greatest extent.
+
+This file lists the mandatory variable values for the system as well as an explanation of how the bars
+function in-game
+--------
+Gauge Values
+
+While not totally useful for the player (and VERY useful for me), these are the standards for the bar
+values. Reading this data provides insight into how the bars work and what causes what. If you're into
+the technical aspects of system mechanics and need to know everything inside and out to do well, by all
+means check this out.
+--------
+Max Balance Gauge var numbers
+Large bar = 200
+Medium bar = 160
+Small bar = 120
+
+Balance Gauge refill rate = 2/sec
+
+Attemped grabs lower the filler slightly (maybe about 1/6th, depending on the size of the bar), throws
+deplete the bar by around 1/3rd of the original value.
+
+Grabs are successful or not based on two variables, the size of the attacker's bar as opposed to the
+defender's (with an additional randomizer) and how much the opponent resists the grab (joystick wiggling)
+
+Attacks only lower the value of the gauge if they cause the opponent to lose balance. Losing balance is
+equivalent to 1/8th, falling down is equivalent to an attempted grab (1/6th).
+
+When the round ends, the balance gauge is reset as I assume you would have time to regain your balance
+in between rounds.
+
+Grapple Gauge
+Amount of filler in the players' gauges is equivalent to the amount currently available in their Balance
+Gauge when they enter the grapple.
+
+The grapple gauge is active until the defender breaks out, the attacker runs out of bar, or the defender
+runs out of bar.
+The grapple gauge for both players drains mid grapple at a rate of = .2/sec
+
+When the players recover from the grapple their balance gauge is set at a value of = 60
+-----------------
+How the bar moves
+-----------------
+The bars move based on your balance & movement. Walking and running move the bar in the direction you're
+moving. Attacks will move the bar depending on the character's center of gravity in the current attack.
+Attacks like light kicks will only move the bar if they cause you to shift your weight. 
+An example in Silber:
+A: light kick - there is very little weight being shifted, so the bar does not move.
+B: small uppercut - No weight shifted, you are still on two feet.
+C: striking with the arm - Silber's entire body weight shifts when he moves in this attack, so the bar
+follows suit.
+
+Balance only applies to moves where you are on the ground. Aerial attacks (which exist as entering the
+air from standing, not attacking from the air) DO NOT affect balance because when you are in the air
+balance technically does not exist for you. You still possess a center of gravity, but it has to do with
+heading straight down as opposed to falling over in one direction (of course I'm not into physics, nor
+did I choose to take it, so if I'm wrong it's just video game logic).
+
+When hit the bar shakes because your balance is compromised for a short amount of time. If an attack
+launches you, your aerial body is under the same criteria as that of aerial attacks and the bar resets
+itself.
+
+If you are in a state where your balance is shifted (based on the bar of course), you will be an easier
+target for someone trying to grab you, similar to how it worked in Buriki One.
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!About positions and resolutions!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+The bars are formatted to work with 640x480 only!
+
+You will not see them if you play in HD!
+
+Sorry!
+_________________
+At the time, he's going to be your target
+
+targetdrop
+trigger1 = target, var(x) > var(x)
+
+in the custom state,
+selfstate
+trigger1 = gethitvar(isbound) = 0 

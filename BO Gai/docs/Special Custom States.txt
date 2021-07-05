@@ -1,0 +1,54 @@
+This file covers the states used in the Buriki One system. These states are listed there because they
+are non-fluctuating. NEVER EVER give one of these states a number outside of it's designated range
+because those ranges are hardcoded into both the Judges' Decision and Balance Gauge system. Without
+these correct it won't line up with the system and it will be ignored in the system states.
+
+Basic attacks = [200-499]
+Throw = [800-899]
+Special attacks = [1000-1999]
+Super attacks = [3000-3999]
+Grappling = [6000-6999]
+
+Special State number groups that should never be used:
+
+Judges' Decision = [-2]
+Balance Gauge = [8000-8999]
+
+
+Notes:
+- The Special attack section is reserved for non-grappling special attacks. The grappling attacks have
+their own section because the balance gauges changes into the grappling gauges when these states are
+entered, and the grappling states directly affect the grappling gauges.
+
+
+Reserved animation numbers for Balance Gauge
+8000 = Gauge P1
+8001 = Gauge P2
+8002 = Bar P1
+8003 = Bar P2
+8004 = Arrow P1
+8005 = Arrow P2
+8006 = Grapple Gauge P1
+8007 = Grapple Gauge P2
+8008 = Grapple bar P1
+8009 = Grapple bar P2
+8010 = Offense (Blinking)
+8011 = Defense (Blinking)
+8100s = Movement
+8200s = Attack
+8700s = Balance to Grapple transfer
+8900s = Being Hit
+
+
+Reserved state & animation numbers:
+(These are for when you are within a grappling situation)
+
+Grapple grip = 6000
+Grappling attack states = 6001-6049
+Grappling: being hit = 6050-6097
+Struggling to break grapple = 6100
+Break Grapple type #1 = 6101 [MUST BE 25 TICKS]
+Break Grapple type #2 = 6102 [MUST BE 25 TICKS]
+Lost grip/target breaking grapple = 6103 [MUST BE 25 TICKS]
+Inbetweens for bar transition = 6998-6999
+more to come...

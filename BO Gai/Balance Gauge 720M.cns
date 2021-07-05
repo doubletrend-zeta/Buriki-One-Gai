@@ -1,0 +1,6249 @@
+;---------------------------------------------------------------------------
+;Throw - Attempt
+[Statedef 800]
+type    = S
+movetype= A
+physics = S
+juggle  = 0
+velset = 0,0
+ctrl = 0
+anim = 800
+sprpriority = 2
+
+;[State 800 Buriki One]
+;type = HitDef
+;Triggerall = (p2name = "Buriki One Silber") && (authorname = "Bannana")
+;Triggerall = (p2name = "Buriki One Gai") && (authorname = "Bannana")
+;trigger1 = target, var(47) < var(47)
+;Trigger1 = Time = 0
+;attr = S, NT
+;hitflag = M-
+;priority = 1, Miss
+;sparkno = -1
+;p1sprpriority = 1
+;p1facing = 1
+;p2facing = 1
+;p1stateno = 6999
+;p2stateno = 6998
+;guard.dist = 0
+
+;[State 800 Buriki One failure]
+;type = HitDef
+;Triggerall = (p2name = "Buriki One Silber") && (authorname = "Bannana")
+;Triggerall = (p2name = "Buriki One Gai") && (authorname = "Bannana")
+;trigger1 = target, var(47) >= var(47)
+;Trigger1 = Time = 0
+;attr = S, NT
+;hitflag = M-
+;priority = 1, Miss
+;sparkno = -1
+;p1sprpriority = 1
+;p1facing = 1
+;p2facing = 1
+;p1stateno = 6103
+;p2stateno = 6101
+;guard.dist = 0
+
+[State 800]
+type = HitDef
+Trigger1 = Time = 0
+attr = S, NT
+hitflag = M-
+priority = 1, Miss
+sparkno = -1
+p1sprpriority = 1
+p1facing = 1
+p2facing = 1
+p1stateno = 801
+p2stateno = 802
+guard.dist = 0
+
+[State 800, 2]
+type = ChangeState
+Trigger1 = AnimTime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;inbetween for attacker
+[Statedef 801]
+type    = S
+movetype= A
+physics = N
+
+[State 801, Grab Sound]
+type = PlaySnd
+trigger1 = 1
+value = S800, 0
+
+[state 801 change state if buriki and success]
+type = changestate
+Triggerall = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+trigger1 = target, var(47) < var(47)
+trigger1 = time = 0
+value = 6999
+
+[state 801 change state if buriki and failure]
+type = changestate
+Triggerall = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+trigger1 = target, var(47) >= var(47)
+trigger1 = time = 0
+value = 804
+
+[state 801 change state if not buriki]
+type = changestate
+Triggerall = (p2name != "Buriki One Silber") || (p2name != "Buriki One Gai Tendo")
+trigger1 = time = 0
+value = 810
+
+;---------------------------------------------------------------------------
+;inbetween for defender
+[Statedef 802]
+type    = S
+movetype= H
+physics = N
+ctrl = 0
+
+[state 802 change state if buriki and success]
+type = changestate
+Triggerall = (p1name = "Buriki One Silber") || (p1name = "Buriki One Gai Tendo")
+trigger1 = enemynear, var(47) > var(47)
+trigger1 = time = 0
+value = 6998
+
+[state 802 change state if buriki and failure]
+type = changestate
+Triggerall = (p1name = "Buriki One Silber") || (p1name = "Buriki One Gai Tendo")
+trigger1 = enemynear, var(47) <= var(47)
+trigger1 = time = 0
+value = 803
+
+[state 802 change state if not buriki]
+type = changestate
+Triggerall = (p1name != "Buriki One Silber") || (p1name != "Buriki One Gai Tendo")
+trigger1 = time = 0
+value = 820
+
+;---------------------------------------------------------------------------
+;Break Grapple: no bar
+[Statedef 803]
+type = S
+movetype = I
+physics = N
+;velset = 4,0
+anim = 6101
+
+[State 803, Pause]
+type = Pause
+triggerall = (GameTime%3) = 1
+trigger1 = time = [0,25]
+time = 3
+movetime = 1
+ignorehitpause = 1
+
+[state 803]
+type = velset
+triggerall = facing = -1
+trigger1 = 1
+x = -2
+
+[state 803]
+type = velset
+triggerall = facing = 1
+trigger1 = 1
+x = 2
+
+[state 803]
+type = selfstate
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;escape Grapple: no bar
+[Statedef 804]
+type = S
+movetype = I
+physics = N
+;velset = 4,0
+anim = 6103
+
+[State 804, Grab Sound]
+type = PlaySnd
+trigger1 = time = 1
+value = S800, 1
+
+[State 804, Pause]
+type = Pause
+triggerall = (GameTime%3) = 1
+trigger1 = time = [0,25]
+time = 3
+movetime = 1
+ignorehitpause = 1
+
+[state 804]
+type = velset
+triggerall = facing = 1
+trigger1 = 1
+x = -2
+
+[state 804]
+type = velset
+triggerall = facing = -1
+trigger1 = 1
+x = 2
+
+[state 804]
+type = changestate
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;Break Grapple
+[Statedef 6101]
+type = S
+movetype = I
+physics = N
+;velset = 4,0
+anim = ifelse(alive = 1,6101,6102)
+
+[State 6101, Pause]
+type = Pause
+triggerall = (GameTime%3) = 1
+trigger1 = time = [0,25]
+time = 3
+movetime = 1
+ignorehitpause = 1
+
+[State 6101 Removal of grappling gague p1]
+type = Explod
+triggerall = teamside = 1
+;triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8710) = 0
+anim = 8710
+PosType = left
+Pos = 160, 156 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8710
+
+[State 6101 Removal of grappling gague p2]
+type = Explod
+triggerall = teamside = 2
+;triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8711) = 0
+anim = 8711;+(TeamSide-1)
+PosType = left
+Pos = 159, 178 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8711
+
+[state 6101 Grapple gauge filler arrow p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8712) = 0
+Anim = 8712;+(TeamSide-1)
+PosType = Left
+Pos = 152, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8712
+Persistent = 1
+
+[state 6101 Grapple gauge filler staff p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8720) = 0
+Anim = 8720;+(TeamSide-1)
+PosType = Left
+Pos = 151, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8720
+Persistent = 1
+
+[state 6101 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = 1
+ID = 8720
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6101 Grapple gauge filler arrow p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8713) = 0
+Anim = 8713;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8713
+Persistent = 1
+
+[state 6101 Grapple gauge filler p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8721) = 0
+Anim = 8721;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8721
+Persistent = 1
+
+[state 6101 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = 1
+ID = 8721
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6101 Appearance of balance bar p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8716) = 0
+trigger1 = time = 15
+anim = 8716
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8716
+
+[State 6101 Appearance of balance bar p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8716) = 0
+trigger1 = time = 15
+anim = 8717
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8716
+
+[State 6101 Appearance of balance bar p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8717) = 0
+trigger1 = time = 15
+anim = 8717;+(TeamSide-1)
+PosType = left
+Pos = 197, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8717
+
+[State 6101 Appearance of balance bar p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8717) = 0
+trigger1 = time = 15
+anim = 8716;+(TeamSide-1)
+PosType = left
+Pos = 294, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8717
+
+[state 6101 balance bar filler p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = numexplod(8718) = 0
+trigger1 = time = 15
+Anim = 8718;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8718
+Persistent = 1
+
+[state 6101 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = 1
+ID = 8718
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6101 balance bar filler p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = numexplod(8719) = 0
+trigger1 = time = 15
+Anim = 8719;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8719
+Persistent = 1
+
+[state 6101 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = 1
+ID = 8719
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6101 Balance gauge arrow p1]
+type = Explod
+triggerall = teamside = 1
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8714) = 0
+trigger1 = time = 15
+anim = 8714;+(TeamSide-1)
+PosType = left
+Pos = 73, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8714
+
+[State 6101 Balance gauge arrow p2]
+type = Explod
+triggerall = teamside = 2
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8715) = 0
+trigger1 = time = 15
+anim = 8715;+(TeamSide-1)
+PosType = left
+Pos = 245, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8715
+
+[state 6101]
+type = velset
+triggerall = alive = 1
+triggerall = facing = -1
+trigger1 = 1
+x = -2
+
+[state 6101]
+type = velset
+triggerall = alive = 1
+triggerall = facing = 1
+trigger1 = 1
+x = 2
+
+[state 6101]
+type = selfstate
+triggerall = alive = 0
+trigger1 = animtime = 0
+value = 5150
+ctrl = 1
+
+[state 6101]
+type = selfstate
+triggerall = alive = 1
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;Grip wears off
+[statedef 6102]
+type = S
+movetype = I
+physics = N
+;velset = 4,0
+anim = 6103
+
+;===========================
+;STATES THAT REMOVE EXPLODS
+[state REMOVE GAI TENDO'S ARMS]
+type = removeexplod
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+ID = 6003
+
+[state REMOVE GAI TENDO'S ARMS]
+type = removeexplod
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+ID = 6005
+;===========================
+
+[State 6102, Grab Sound]
+type = PlaySnd
+trigger1 = time = 1
+value = S800, 1
+
+[State 6102, Pause]
+type = Pause
+triggerall = (GameTime%3) = 1
+trigger1 = time = [0,25]
+time = 3
+movetime = 1
+ignorehitpause = 1
+
+[State 6102 Removal of grappling gague p1]
+type = Explod
+triggerall = teamside = 1
+;triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6102)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8710) = 0
+anim = 8710
+PosType = left
+Pos = 160, 156 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8710
+
+[State 6102 Removal of grappling gague p2]
+type = Explod
+triggerall = teamside = 2
+;triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6102)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8711) = 0
+anim = 8711;+(TeamSide-1)
+PosType = left
+Pos = 159, 178 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8711
+
+[state 6102 Grapple gauge filler arrow p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6102)
+trigger1 = numexplod(8712) = 0
+Anim = 8712;+(TeamSide-1)
+PosType = Left
+Pos = 152, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8712
+Persistent = 1
+
+[state 6102 Grapple gauge filler staff p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6102)
+trigger1 = numexplod(8720) = 0
+Anim = 8720;+(TeamSide-1)
+PosType = Left
+Pos = 151, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8720
+Persistent = 1
+
+[state 6102 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6101) || (stateno = 6102)
+trigger1 = 1
+ID = 8720
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6102 Grapple gauge filler arrow p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6102)
+trigger1 = numexplod(8713) = 0
+Anim = 8713;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8713
+Persistent = 1
+
+[state 6102 Grapple gauge filler staff p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6102)
+trigger1 = numexplod(8721) = 0
+Anim = 8721;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8721
+Persistent = 1
+
+[state 6102 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6101) || (stateno = 6102)
+trigger1 = 1
+ID = 8721
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6102 Appearance of balance bar p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8716) = 0
+trigger1 = time = 15
+anim = 8716
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8716
+
+[State 6102 Appearance of balance bar p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8716) = 0
+trigger1 = time = 15
+anim = 8717
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8716
+
+[State 6102 Appearance of balance bar p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8717) = 0
+trigger1 = time = 15
+anim = 8717;+(TeamSide-1)
+PosType = left
+Pos = 197, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8717
+
+[State 6102 Appearance of balance bar p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8717) = 0
+trigger1 = time = 15
+anim = 8716;+(TeamSide-1)
+PosType = left
+Pos = 294, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8717
+
+[state 6102 balance bar filler p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = numexplod(8718) = 0
+trigger1 = time = 15
+Anim = 8718;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8718
+Persistent = 1
+
+[state 6102 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = 1
+ID = 8718
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6102 balance bar filler p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = numexplod(8719) = 0
+trigger1 = time = 15
+Anim = 8719;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8719
+Persistent = 1
+
+[state 6102 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = 1
+ID = 8719
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6102 Balance gauge arrow p1]
+type = Explod
+triggerall = teamside = 1
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8714) = 0
+trigger1 = time = 15
+anim = 8714;+(TeamSide-1)
+PosType = left
+Pos = 73, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8714
+
+[State 6102 Balance gauge arrow p2]
+type = Explod
+triggerall = teamside = 2
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8715) = 0
+trigger1 = time = 15
+anim = 8715;+(TeamSide-1)
+PosType = left
+Pos = 245, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8715
+
+[state 6102]
+type = velset
+triggerall = facing = 1
+trigger1 = 1
+x = -2
+
+[state 6102]
+type = velset
+triggerall = facing = -1
+trigger1 = 1
+x = 2
+
+[state 6102]
+type = selfstate
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;Lost grip/enemy breaks grapple
+[Statedef 6103]
+type = S
+movetype = I
+physics = N
+;velset = 4,0
+anim = ifelse((enemy,alive = 1),6103,0)
+
+;===========================
+;STATES THAT REMOVE EXPLODS
+[state REMOVE GAI TENDO'S ARMS]
+type = removeexplod
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+ID = 6003
+
+[state REMOVE GAI TENDO'S ARMS]
+type = removeexplod
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+ID = 6005
+;===========================
+
+[state 6103 posset if saddle]
+type = posset
+triggerall = name = "Buriki One Gai Tendo"
+trigger1 = time = 0
+trigger1 = prevstateno = 6002
+y = 0
+
+[State 6103, Grab Sound]
+type = PlaySnd
+Triggerall = enemy,alive = 1
+trigger1 = time = 1
+value = S800, 1
+
+[State 6103, Pause]
+type = Pause
+triggerall = (GameTime%3) = 1
+trigger1 = time = [0,25]
+time = 3
+movetime = 1
+ignorehitpause = 1
+
+[State 6103 Removal of grappling gague p1]
+type = Explod
+triggerall = teamside = 1
+;triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8710) = 0
+anim = 8710
+PosType = left
+Pos = 160, 156 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8710
+
+[State 6103 Removal of grappling gague p2]
+type = Explod
+triggerall = teamside = 2
+;triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8711) = 0
+anim = 8711;+(TeamSide-1)
+PosType = left
+Pos = 159, 178 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8711
+
+[state 6103 Grapple gauge filler arrow p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8712) = 0
+Anim = 8712;+(TeamSide-1)
+PosType = Left
+Pos = 152, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8712
+Persistent = 1
+
+[state 6103 Grapple gauge filler staff p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8720) = 0
+Anim = 8720;+(TeamSide-1)
+PosType = Left
+Pos = 151, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8720
+Persistent = 1
+
+[state 6103 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = 1
+ID = 8720
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6103 Grapple gauge filler arrow p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8713) = 0
+Anim = 8713;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8713
+Persistent = 1
+
+[state 6103 Grapple gauge filler staff p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = numexplod(8721) = 0
+Anim = 8721;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8721
+Persistent = 1
+
+[state 6103 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6101) || (stateno = 6103)
+trigger1 = 1
+ID = 8721
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6103 Appearance of balance bar p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8716) = 0
+trigger1 = time = 15
+anim = 8716
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8716
+
+[State 6103 Appearance of balance bar p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8716) = 0
+trigger1 = time = 15
+anim = 8717
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8716
+
+[State 6103 Appearance of balance bar p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8717) = 0
+trigger1 = time = 15
+anim = 8717;+(TeamSide-1)
+PosType = left
+Pos = 197, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8717
+
+[State 6103 Appearance of balance bar p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8717) = 0
+trigger1 = time = 15
+anim = 8716;+(TeamSide-1)
+PosType = left
+Pos = 294, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8717
+
+[state 6103 balance bar filler p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = numexplod(8718) = 0
+trigger1 = time = 15
+Anim = 8718;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8718
+Persistent = 1
+
+[state 6103 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = 1
+ID = 8718
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6103 balance bar filler p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = numexplod(8719) = 0
+trigger1 = time = 15
+Anim = 8719;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8719
+Persistent = 1
+
+[state 6103 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = 6101) || (stateno = 6102) || (stateno = 6103)
+trigger1 = 1
+ID = 8719
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6103 Balance gauge arrow p1]
+type = Explod
+triggerall = teamside = 1
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8714) = 0
+trigger1 = time = 15
+anim = 8714;+(TeamSide-1)
+PosType = left
+Pos = 73, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8714
+
+[State 6103 Balance gauge arrow p2]
+type = Explod
+triggerall = teamside = 2
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8715) = 0
+trigger1 = time = 15
+anim = 8715;+(TeamSide-1)
+PosType = left
+Pos = 245, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8715
+
+[state 6103]
+type = velset
+triggerall = enemy,alive = 1
+triggerall = facing = 1
+trigger1 = 1
+x = -2
+
+[state 6103]
+type = velset
+triggerall = enemy,alive = 1
+triggerall = facing = -1
+trigger1 = 1
+x = 2
+
+[state 6103]
+type = changestate
+triggerall = enemy,alive = 0
+trigger1 = time = 25
+value = 0
+ctrl = 1
+
+[state 6103]
+type = assertspecial
+triggerall = enemy, alive = 0
+trigger1 = 1
+flag = nokoslow
+
+[state 6103]
+type = changestate
+trigger1 = animtime = 0
+value = 0
+ctrl = 1
+
+;---------------------------------------------------------------------------
+;Transition into grapple states defense
+[Statedef 6998]
+type    = S
+movetype= H
+physics = N
+anim = 6998
+
+;Appearance of the grappling gague
+[State 6998 Appearance of grappling gague p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+triggerall = (stateno = 6999) || (stateno = 6998)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8700) = 0
+anim = 8700
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8700
+
+[State 6998 Appearance of grappling gague p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+triggerall = (stateno = 6999) || (stateno = 6998)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8700) = 0
+anim = 8701
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8700
+
+[State 6998 Appearance of grappling gague p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+triggerall = (stateno = 6999) || (stateno = 6998)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8701) = 0
+anim = 8701;+(TeamSide-1)
+PosType = left
+Pos = 197, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8701
+
+[State 6998 Appearance of grappling gague p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+triggerall = (stateno = 6999) || (stateno = 6998)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8701) = 0
+anim = 8700;+(TeamSide-1)
+PosType = left
+Pos = 294, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8701
+
+[state 6998 Grapple gauge filler arrow p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = numexplod(8702) = 0
+Anim = 8702;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8702
+Persistent = 1
+
+
+[state 6998 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = 1
+ID = 8702
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6998 Grapple gauge filler p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = numexplod(8703) = 0
+Anim = 8703;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8703
+Persistent = 1
+
+[state 6998 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = 1
+ID = 8703
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6998 Balance gauge arrow p1]
+type = Explod
+triggerall = teamside = 1
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8704) = 0
+anim = 8704;+(TeamSide-1)
+PosType = left
+Pos = 73, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8704
+
+[State 6998 Balance gauge arrow p2]
+type = Explod
+triggerall = teamside = 2
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8705) = 0
+anim = 8705;+(TeamSide-1)
+PosType = left
+Pos = 245, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8705
+
+[state 6998]
+type = ChangeState
+trigger1 = time = 35
+value = 6050
+ctrl = 0
+
+;------------------------------------------------------------------------------------
+;transition attacking
+[Statedef 6999]
+type    = S
+movetype= A
+physics = N
+anim = 6999
+
+;=====================================
+;SPECIFIC ATTACKER POSITIONING FOR SETTING UP GRAPPLES
+[state GAI TENDO HAS NO INBETWEENS WTF]
+type = envcolor
+triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+value = 0,0,0
+time = 5
+
+[state GAI TENDO IS ATTACKING TARGETBIND]
+type = targetbind
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+pos = 0,0
+
+[state GAI TENDO NEEDS TO BE BEHIND TO GET THE BUTT]
+type = sprpriority
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+value = -1
+
+[state GAI TENDO'S EXTRA ARMS]
+type = explod
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 0
+anim = 6003
+ID = 1
+pos = 0,0
+ontop = 1
+
+[state GAI TENDOS ARMS NEED TO GO AWAY]
+type = removeexplod
+Triggerall = (name = "Buriki One Gai Tendo")
+trigger1 = time = 35
+ID = 1
+;====================================
+
+[State 6999 Appearance of grappling gague p1]
+type = Explod
+triggerall = teamside = 1
+;triggerall = facing = 1
+triggerall = (stateno = 6999) || (stateno = 6998)
+trigger1 = roundstate >= 0
+trigger1 = numexplod(8700) = 0
+anim = 8700
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8700
+
+[State 6999 Appearance of grappling gague p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+triggerall = (stateno = 6999) || (stateno = 6998)
+trigger1 = RoundState >= 0
+trigger1 = numexplod(8701) = 0
+anim = 8701;+(TeamSide-1)
+PosType = left
+Pos = 197, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8701
+
+[state 6999 Grapple gauge filler p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = numexplod(8702) = 0
+Anim = 8702;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8702
+Persistent = 1
+
+[state 6999 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = 1
+ID = 8702
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state 6999 Grapple gauge filler p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = numexplod(8703) = 0
+Anim = 8703;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8703
+Persistent = 1
+
+[state 6999 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = (stateno = 6999) || (stateno = 6998)
+trigger1 = 1
+ID = 8703
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State 6999 Balance gauge arrow p1]
+type = Explod
+triggerall = teamside = 1
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8704) = 0
+anim = 8704;+(TeamSide-1)
+PosType = left
+Pos = 73, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8704
+
+[State 6999 Balance gauge arrow p2]
+type = Explod
+triggerall = teamside = 2
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8705) = 0
+anim = 8705;+(TeamSide-1)
+PosType = left
+Pos = 245, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8705
+
+[state 6999]
+type = ChangeState
+trigger1 = time = 35
+value = 6000
+ctrl = 0
+
+
+;---------------------------------------------------------------------------
+; States that are always executed (use statedef -2)
+;---------------------------------------------------------------------------
+[Statedef -2]
+;---------------------------------------------------------------------------
+;Clipboards
+[State -2 Check variables]
+type = displaytoclipboard
+trigger1 = 1
+text = "The value of var(40) is %d, the value of var(41) is %i, fvar(38) is %f, var(47) is %g, var 48 %G"
+params = var(40),var(41),Fvar(38),var(47),var(48)
+
+[state -2 check vel constants if Gai Tendo]
+type = displaytoclipboard
+triggerall = name = "Buriki One Gai Tendo"
+Triggerall = stateno = [3048,3052]
+trigger1 = 1
+text = "vel x is %d, frontedgebodydist is %i, that times .2 is %f, p2bodydist x is %g, that times .5 is %G"
+params = vel x, frontedgebodydist, frontedgebodydist*.2, p2bodydist x, p2bodydist x*.5
+
+[State -2 check length of p2 liedown]
+type = displayToClipboard
+triggerall = (p2stateno = 5110) || (p2statetype = L)
+trigger1 = 1
+text = "P2 liedown time is %d"
+params = var(31)
+
+[State -2 Distance if AI]
+type = displaytoclipboard
+triggerall = var(29) < 1
+trigger1 = 1
+text = "P2 Body Distance is %d"
+params = P2bodydist X
+
+;--------------------------------------------------------------------------
+;This is the damage dampener
+[State -2 Reset that shit]
+type = VarSet
+trigger1 = roundstate < 2
+trigger2 = stateno = 0
+trigger2 = hitcount = 0
+fv = 38
+value = 0
+Ignorehitpause = 1
+
+[State -2 Dampening Fvaradd]
+type = Varadd
+triggerall = movehit = 1
+trigger1 = (stateno = [200,299]) || (stateno = [1000,1999]) || (stateno = [3000,3999])
+trigger2 = (stateno = [6000,6999])
+Fv = 38
+value = 1
+
+[State -2 Hey guys what's up? I'm just attacking here.]
+type = AttackMulSet
+trigger1 = Fvar(38) = 0
+value = 1
+[State -2 I can only get a 5 hit combo but it's a 75% = DAMPENER]
+type = AttackMulSet
+trigger1 = Fvar(38) = 1
+value = 1
+[State -2 It gets worse]
+type = AttackMulSet
+trigger1 = Fvar(38) = 2
+value = 0.7
+[State -2 Much worse]
+type = AttackMulSet
+trigger1 = Fvar(38) = 3
+value = 0.55
+[State -2 Much much worse]
+type = AttackMulSet
+trigger1 = Fvar(38) = 4
+value = 0.4
+[State -2 Really, it's worse]
+type = AttackMulSet
+trigger1 = Fvar(38) = 5
+value = 0.3
+[State -2 Bad]
+type = AttackMulSet
+trigger1 = Fvar(38) = 6
+value = 0.2
+[State -2 Damn son]
+type = AttackMulSet
+trigger1 = Fvar(38) = 7
+value = 0.1
+[State -2 At this point it's just the AI]
+type = AttackMulSet
+trigger1 = Fvar(38) >= 8
+value = 0.05
+
+;------------------------------------------------------------------------------
+;Super Armor Code by Seravy
+[State -2]
+Type = Helper
+Triggerall = NumHelper(11777) = 0 ; Create the superarmor helper if it doesn't exist.
+Trigger1 = name = "Buriki One Gai Tendo"
+Trigger1 = stateno = 3001 ;Condition when Superarmor needs to be active comes here.
+OwnPal = 1
+PosType = P1
+Pos = 0, 0
+ID = 11777
+StateNo = 11777
+PauseMoveTime = 999999
+SuperMoveTime = 999999
+Name = "SuperArmor"
+
+[State -2, LifeAdd]
+Type = LifeAdd
+Trigger1 = NumHelper(11777) > 0 ; If the superarmor helper exists, subtract taken damage from life.
+Trigger1 = fVar(29) >=1
+Value = -floor(fVar(29))
+ignorehitpause=1
+
+[State -2, VarSet]
+Type = VarAdd
+Trigger1 = 1
+FV = 29
+Value = -floor(fvar(29)) ; Damage already subtracted needs to be removed from the variable
+ignorehitpause=1
+
+[State -2]
+Type= NotHitBy
+Trigger1= NumHelper(11777)>0 ; If the superarmor helper is active, the character cannot be hit by anything.
+value=SAC
+
+[State -2]
+Type= NotHitBy
+Trigger1= NumHelper(11777)>0 ; If the superarmor helper is active, the character cannot be hit by anything.
+value2=SAC ; This is for safety, as another Nothitby might override the first one, so better be safe and apply it to both slots.
+;------------------------------------------------------------------------------
+;p2 liedown
+[state -2 zero if not liedown]
+type = varset
+trigger1 = p2statetype != L
+v = 31
+value = 0
+ignorehitpause = 1
+
+[state -2 liedown time]
+type = varadd
+trigger1 = p2stateno = 5110
+v = 31
+value = 1
+ignorehitpause = 1
+
+;------------------------------------------------------------------------------
+;Judge's Decision
+;This section concerns judges' decision.
+;Judges' Decision is a mechanic that compares the score earned by the two players over the round in the 
+;case of a Time Out and overrides the normal time out system.
+;------------------------------------------------------------------------------
+;var(40) dictates the score for player 1
+[State -2 set up Judges' Decision var]
+type = varset
+trigger1 = Roundstate < 2 && IsHomeTeam
+;trigger1 = Roundstate = 2 && Teamside = 1 ;This section is the alternate version for if you want to play
+v = 40			                   ;Arcade mode, as IsHomeTeam is the computer in Arcade Mode so
+value = 0				   ;the vars would not be active. Be sure to change the P2 also.
+
+[State -2 calculate score for standard attacks]
+type = varadd
+trigger1 = (stateno = [200,499]) && movehit = 1
+v = 40
+value = ceil(100*1.08)
+;value = floor(target,gethitvar(damage)*1.08)
+
+[State -2 calculate score for grabs]
+type = varadd
+trigger1 = P2stateno = 820 && time = 0
+v = 40
+value = 300
+
+[State -2 calculate score for Special attacks]
+type = varadd
+trigger1 = numtarget
+trigger1 = (stateno = [1000,1999]) && movehit = 1
+v = 40
+value = ceil(100*1.53)
+
+[State -2 calculate score for Super attacks]
+type = varadd
+trigger1 = (stateno = [3000,3999]) && movehit = 1
+v = 40
+value = ceil(100*1.75)
+
+[State -2 calculate score for Grapples]
+type = varadd
+trigger1 = numtarget
+trigger1 = (stateno = [6000,6999]) && movehit = 1
+v = 40
+value = floor(hitcount*400)
+;------------------------------------------------------------------------------
+;var(41) dictates the score for player 2
+[State -2 set up Judges' Decision var]
+type = varset
+trigger1 = (Roundstate < 2) && IsHomeTeam
+;trigger1 = Roundstate = 2 && Teamside = 1
+v = 41
+value = 0
+
+[State -2 calculate score for standard attacks]
+type = varadd
+trigger1 = (P2stateno = [200,499]) && time = 0
+v = 41
+value = ceil(100*1.08)
+
+[State -2 calculate score for grabs]
+type = varadd
+trigger1 = (stateno = 820) && time = 0
+v = 41
+value = 300
+
+[State -2 calculate score for Special attacks]
+type = varadd
+trigger1 = (P2stateno = [1000,1999]) && time = 0
+v = 41
+value = ceil(100*1.53)
+
+[State -2 calculate score for Super attacks]
+type = varadd
+trigger1 = (P2stateno = [3000,3999]) && time = 0
+v = 41
+value = ceil(100*1.75)
+
+[State -2 calculate score for Grapples]
+type = varadd
+trigger1 = (stateno = [6000,6999]) && time = 0
+v = 41
+value = floor(gethitvar(hitcount)*400)
+;------------------------------------------------------------------------------
+;These states act alongside Judges' Decision
+[State -2 time out override]
+type = assertspecial
+trigger1 = !WinKO
+trigger1 = time = [1,300]
+flag = roundnotover
+
+[State -2 compare score & P1 win]
+type = LifeAdd
+trigger1 = RoundState = 3
+trigger1 = !WinKO
+trigger1 = var(40) > var(41)
+value = 1000
+
+[State -2 compare score & P2 win]
+type = LifeAdd
+trigger1 = RoundState = 3
+trigger1 = !WinKO
+trigger1 = var(40) < var(41)
+value = -1000
+
+;----------------------------------------------------------------------------------
+;Balance gauge system - var(47)
+; this section is dedicated to the system coding for the bars.
+; When this was first coded it was really simple but modifyexplod actually doesn't work because
+; electbyte coded it in the most buggy way possible so that the vel and accel controls do nothing.
+; Therefore I had to create a set of code for each player's bar as opposed to doing it with one block
+; of code.
+[State -2 set up gauge variable]
+type = varset
+;triggerall = teamside = 1
+triggerall = roundstate < 2
+trigger1 = 1
+v = 47
+;value = 120 ;size of small gauge
+value = 160 ;size of medium gauge
+;value = 200 ;size of large gauge
+ignorehitpause=1
+persistent=1
+
+[State -2 prevent var from going below zero]
+type = varset
+trigger1 = var(47) < 0
+v = 47
+value = 0
+ignorehitpause = 1
+persistent = 1
+
+[State -2 refill balance gauge] ;you need to guarantee that this isn't active during hitstates, otherwise it defeats
+type = VarAdd		  ;the purpose of it being based on balance. Be sure to get all the customs in too.
+;triggerall = teamside = 1
+triggerall = roundstate = 2
+triggerall = var(47) < 160
+;triggerall = (stateno != [5000,5210]) || (stateno != [255,258]) || (stateno != [820,821]) || (stateno != 1052)
+;triggerall = (stateno != [3021,3022])
+triggerall = movetype != H ^^ (stateno != [6000,6049]) ^^ (stateno != 6999)
+trigger1 = (GameTime%60) = 0
+v = 47
+value = 2
+persistent = 1
+ignorehitpause = 1
+
+;[State -2 grab attempt]
+;type = varadd
+;trigger1 = anim = 5120 && animtime = 0
+;v = 47
+;value = -20
+;value = -26
+;value = -33
+
+[State -2 grapple deplete]
+type = varadd
+triggerall = stateno = 6000
+trigger1 = (gametime%50) = 0
+;triggers for character specific grapples
+trigger2 = name = "Buriki One Gai Tendo"
+trigger2 = stateno = 6002
+trigger2 = (gametime%50) = 0
+v = 47
+;value = 120/-13
+value = 160/-13
+;value = 180/-13
+persistent = 1
+ignorehitpause = 1
+
+[State -2 Thrown]
+type = varadd
+trigger1 = stateno = 6051 && time = 1
+v = 47
+;value = -10
+value = -23
+;value = -36
+
+[State -2 standing lost balance]
+type = varadd
+trigger1 = (anim = [5001,5002]) && (anim = [5011,5012]) && (anim = [5021,5022]) && (anim = 5070)
+trigger1 = animtime = 0
+v = 47
+;value = -15
+value = -20
+;value = -25
+
+[State -2 getup balance loss]
+type = varadd
+trigger1 = anim = 5120 && animtime = 0
+v = 47
+;value = -10
+value = -13
+;value = -16
+;-----------------------------------------------------------------------------------------
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+trigger1 = (RoundState >= 0)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8000;+(TeamSide-1)
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8000
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+trigger1 = (RoundState >= 0)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8001;+(TeamSide-1)
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8000
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+trigger1 = (RoundState >= 0)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8001;+(TeamSide-1)
+PosType = left
+Pos = 197, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8001
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+trigger1 = (RoundState >= 0)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8000;+(TeamSide-1)
+PosType = left
+Pos = 294, 174 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8001
+
+[state -2 balance gauge filler p1]
+Type = Explod
+triggerall = teamside = 1
+Triggerall = (RoundState >= 0)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8002;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8002
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8002
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+triggerall = teamside = 2
+Triggerall = (RoundState >= 0)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8003;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8003
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8003
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 Balance gauge arrow p1]
+type = Explod
+triggerall = teamside = 1
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8004) = 0
+anim = 8004;+(TeamSide-1)
+PosType = left
+Pos = 73, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8004
+
+[State -2 Balance gauge arrow p2]
+type = Explod
+triggerall = teamside = 2
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8005) = 0
+anim = 8005;+(TeamSide-1)
+PosType = left
+Pos = 245, 178
+ownpal = 1
+removetime = -1
+scale = 0.30,0.30 ;1280x720 size
+;scale = 0.43,0.43 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 7
+ID = 8005
+
+;------------------------------------------------------------------------------
+;Balance Gauge movement states
+;These move the balance gauge during specific actions.
+;Thanks for fucking up modifyexplod electbyte and making my life harder.
+;There will be thousands of sections because of ID numbers GET READY BOYS
+;=============================================================================
+;REMOVE STANDARD BARS FOR MOVEMENT
+;=============================================================================
+[State -2 walk remove base] ;Attack state numbers should always change depending on the character's moves
+type = removeexplod
+trigger1 = (stateno != 0) && (stateno != [10,12]) && (stateno != [40,52]) && (stateno != 20) && (stateno != 5900)
+trigger1 = (stateno != [120,195]) && (stateno != [230,240]) && (stateno != [800,810]) && (stateno != [1000,1099])
+trigger1 = (stateno != [2999,3099]); && (stateno != [3050,3052])
+;Being hit
+trigger1 = (stateno != [5035,5050]) && (stateno != [5110,5210]) && (stateno != [820,821]) && (stateno != 5001)
+trigger1 = (anim != [5030,5300])
+trigger2 = (anim = [5000,5002]) && (anim = [5010,5012]) && (anim = [5020,5022])
+;to prevent it from appearing in grapple states
+trigger3 = (stateno = [6000,6999])
+trigger3 = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+;Specific character hitstates
+trigger1 = (anim != 255) && (anim != 257) && (anim != 1052);These three are Silber specific
+trigger1 = (stateno != [1212121212,1515151515])
+;trigger3 = command = "holdguard"
+ID = 8000
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = (stateno != 0) && (stateno != [40,52]) && (stateno != [10,12]) && (stateno != 20) && (stateno != 5900)
+trigger1 = (stateno != [120,195]) && (stateno != [230,240]) && (stateno != [800,810]) && (stateno != [1000,1099])
+trigger1 = (stateno != [2999,3099]); && (stateno != [3050,3052])
+;Being hit
+trigger1 = (stateno != [5035,5050]) && (stateno != [5110,5210]) && (stateno != [820,821]) && (stateno != 5001)
+trigger1 = (anim != [5030,5300])
+trigger2 = (anim = [5000,5002]) && (anim = [5010,5012]) && (anim = [5020,5022])
+;to prevent it from appearing in grapple states
+trigger3 = (stateno = [6000,6999])
+trigger3 = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+;Specific character hitstates
+trigger1 = (anim != 255) && (anim != 257) && (anim != 1052);These three are Silber specific
+trigger1 = (stateno != [1212121212,1515151515])
+;trigger3 = command = "holdguard"
+ID = 8001
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = (stateno != 0) && (stateno != [40,52]) && (stateno != [10,12]) && (stateno != 20) && (stateno != 5900)
+trigger1 = (stateno != [120,195]) && (stateno != [230,240]) && (stateno != [800,810]) && (stateno != [1000,1099])
+trigger1 = (stateno != [2999,3099]); && (stateno != [3050,3052])
+;Being hit
+trigger1 = (stateno != [5035,5050]) && (stateno != [5110,5210]) && (stateno != [820,821]) && (stateno != 5001)
+trigger1 = (anim != [5030,5300])
+trigger2 = (anim = [5000,5002]) && (anim = [5010,5012]) && (anim = [5020,5022])
+;to prevent it from appearing in grapple states
+trigger3 = (stateno = [6000,6999])
+trigger3 = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+;Specific character hitstates
+trigger1 = (anim != 255) && (anim != 257) && (anim != 1052);These three are Silber specific
+trigger1 = (stateno != [1212121212,1515151515])
+;trigger3 = command = "holdguard"
+ID = 8002
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = (stateno != 0) && (stateno != [40,52]) && (stateno != [10,12]) && (stateno != 20) && (stateno != 5900)
+trigger1 = (stateno != [120,195]) && (stateno != [230,240]) && (stateno != [800,810]) && (stateno != [1000,1099])
+trigger1 = (stateno != [2999,3099]); && (stateno != [3050,3052])
+;Being hit
+trigger1 = (stateno != [5035,5050]) && (stateno != [5110,5210]) && (stateno != [820,821]) && (stateno != 5001)
+trigger1 = (anim != [5030,5300])
+trigger2 = (anim = [5000,5002]) && (anim = [5010,5012]) && (anim = [5020,5022])
+;to prevent it from appearing in grapple states
+trigger3 = (stateno = [6000,6999])
+trigger3 = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+;Specific character hitstates
+trigger1 = (anim != 255) && (anim != 257) && (anim != 1052);These three are Silber specific
+trigger1 = (stateno != [1212121212,1515151515])
+;trigger3 = command = "holdguard"
+ID = 8003
+[State -2 grapple remove arrow]
+type = removeexplod
+trigger1 = (stateno = [6000,6999])
+trigger1 = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+ID = 8004
+[State -2 grapple remove arrow]
+type = removeexplod
+trigger1 = (stateno = [6000,6999])
+trigger1 = (p2name = "Buriki One Silber") || (p2name = "Buriki One Gai Tendo")
+ID = 8005
+;============================================================================
+;WALKING FORWARD
+;============================================================================
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 98
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8100;+(TeamSide-1)
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8100
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 98
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8101;+(TeamSide-1)
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8100
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 98
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8101;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8101
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 98
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8100;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8101
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 98
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8102;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8102
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 98
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8122;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8102
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8102
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 98
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8103;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8103
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 98
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8123;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8103
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8103
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+;------------
+;STOP WALKING
+;------------
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdback"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8100
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdfwd"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8100
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdfwd"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8101
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdback"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8101
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdback"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8102
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdfwd"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8102
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdfwd"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8103
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+triggerall = stateno != 98
+trigger1 = (stateno = 59); && (stateno != 59)
+trigger2 = command = "holdback"
+trigger3 = stateno = [6000,6999]
+;trigger4 = command = "Grab1"
+trigger5 = (gethitvar(guarded) = 0) && (stateno != 100)
+trigger6 = stateno = [10,11]
+ID = 8103
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8104;+(TeamSide-1)
+PosType = left
+Pos = 121, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8104
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8105;+(TeamSide-1)
+PosType = left
+Pos = 24, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8104
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8105;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8105
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8104;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8105
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8106;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8106
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8126;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8106
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8106
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8107;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8107
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = (stateno = 59); || (command = "Grab1")
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8127;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8107
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8107
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = stateno = [6000,6999]
+ID = 8104
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = stateno = [6000,6999]
+ID = 8105
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = stateno = [6000,6999]
+ID = 8106
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = stateno = [6000,6999]
+ID = 8107
+;============================================================================
+;WALKING BACKWARD
+;============================================================================
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 99
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8110;+(TeamSide-1)
+PosType = left
+Pos = 121, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8110
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 99
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8111;+(TeamSide-1)
+PosType = left
+Pos = 24, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8110
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 99
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8111;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8111
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 99
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8110;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8111
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 99
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8112;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8112
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 99
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8102;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8112
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8112
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 99
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8113;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8113
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 99
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8103;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8113
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8113
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+;------------
+;STOP WALKING
+;------------
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+trigger1 = stateno = 60
+trigger2 = command = "holdfwd"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8110
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+trigger1 = stateno = 60
+trigger2 = command = "holdback"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8110
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+trigger1 = stateno = 60
+trigger2 = command = "holdback"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8111
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+trigger1 = stateno = 60
+trigger2 = command = "holdfwd"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8111
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+trigger1 = stateno = 60
+trigger2 = command = "holdfwd"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8112
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+trigger1 = stateno = 60
+trigger2 = command = "holdback"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8112
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = -1
+trigger1 = stateno = 60
+trigger2 = command = "holdback"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8113
+[State -2 walk remove base]
+type = removeexplod
+triggerall = facing = 1
+trigger1 = stateno = 60
+trigger2 = command = "holdfwd"
+trigger2 = stateno = (120,153)
+;trigger2 = movetype = H
+ID = 8113
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8114;+(TeamSide-1)
+PosType = left
+Pos = 121, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8114
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8115;+(TeamSide-1)
+PosType = left
+Pos = 24, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8114
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8115;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8115
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8114;+(TeamSide-1)
+PosType = left
+Pos = 294, 223
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8115
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8116;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8116
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8106;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8116
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8116
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8117;+(TeamSide-1)
+PosType = Left
+Pos = 245, 223
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8117
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 60) || (stateno = (120,153)); || (movetype = H)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8107;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8117
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8117
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8114
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8115
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8116
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8117
+;============================================================================
+;RUN FORWARD
+;============================================================================
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 100
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8100;+(TeamSide-1)
+PosType = left
+Pos = 121, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8100
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 100
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8101;+(TeamSide-1)
+PosType = left
+Pos = 24, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8100
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 100
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8101;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8101
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 100
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8100;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8101
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 100
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8102;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8102
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 100
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8122;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8102
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8102
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 100
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8103;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8103
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 100
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8123;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8103
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8103
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+;------------
+;STOP WALKING
+;------------
+[State -2 walk remove base]
+type = removeexplod
+triggerall = stateno != 100
+trigger1 = stateno = 61
+trigger2 = (gethitvar(guarded) = 0) && (stateno != 98)
+ID = 8100
+[State -2 walk remove base]
+type = removeexplod
+triggerall = stateno != 100
+trigger1 = stateno = 61
+trigger2 = (gethitvar(guarded) = 0) && (stateno != 98)
+ID = 8101
+[State -2 walk remove base]
+type = removeexplod
+triggerall = stateno != 100
+trigger1 = stateno = 61
+trigger2 = (gethitvar(guarded) = 0) && (stateno != 98)
+ID = 8102
+[State -2 walk remove base]
+type = removeexplod
+triggerall = stateno != 100
+trigger1 = stateno = 61
+trigger2 = (gethitvar(guarded) = 0) && (stateno != 98)
+ID = 8103
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8104;+(TeamSide-1)
+PosType = left
+Pos = 121, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8104
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8105;+(TeamSide-1)
+PosType = left
+Pos = 24, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8104
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8105;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8105
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8104;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8105
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8106;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8106
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8126;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8106
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8106
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8107;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8107
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = (stateno = 61)
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8127;+(TeamSide-1)
+PosType = Left
+Pos = 245, 223
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8107
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8107
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8104
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8105
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8106
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8107
+;============================================================================
+;HOP BACKWARD
+;============================================================================
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 105
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8110;+(TeamSide-1)
+PosType = left
+Pos = 121, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8110
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 105
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8111;+(TeamSide-1)
+PosType = left
+Pos = 24, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8110
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 105
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8111;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8111
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 105
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8110;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8111
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 105
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8112;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8112
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 105
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8102;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8112
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8112
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 105
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8113;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8113
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 105
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8103;+(TeamSide-1)
+PosType = Left
+Pos = 245, 223
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8113
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8113
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+;------------
+;STOP WALKING
+;------------
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 62
+trigger2 = (stateno = [120,153])
+ID = 8110
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 62
+trigger2 = (stateno = [120,153])
+ID = 8111
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 62
+trigger2 = (stateno = [120,153])
+ID = 8112
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 62
+trigger2 = (stateno = [120,153])
+ID = 8113
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8114;+(TeamSide-1)
+PosType = left
+Pos = 121, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8114
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8115;+(TeamSide-1)
+PosType = left
+Pos = 24, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8114
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8115;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8115
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8114;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8115
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8116;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8116
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8106;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8116
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8116
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8117;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8117
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = (stateno = 62) || (stateno = [120,153])
+trigger1 = (stateno != [6000,6999])
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8107;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8117
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8117
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8114
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8115
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8116
+[State -2 walk remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8117
+;============================================================================
+;A
+;============================================================================
+;Same as standing (depends on character)
+;============================================================================
+;B
+;============================================================================
+;Same as standing (depends on character)
+;============================================================================
+;C
+;============================================================================
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 250
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8200;+(TeamSide-1)
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8200
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 250
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8201;+(TeamSide-1)
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8200
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 250
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8201;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8201
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 250
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8200;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8201
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = 1
+trigger1 = stateno = 250
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8202;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8202
+Persistent = 1
+
+[state -2 balance gauge filler p1]
+Type = Explod
+trigger1 = teamside = 1
+triggerall = facing = -1
+trigger1 = stateno = 250
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8222;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8202
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8202
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = -1
+trigger1 = stateno = 250
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8203;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8203
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+trigger1 = teamside = 2
+triggerall = facing = 1
+trigger1 = stateno = 250
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8223;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8203
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8203
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 C remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8200
+[State -2 C remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8201
+[State -2 C remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8202
+[State -2 C remove base]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8203
+;============================================================================
+;Special Attacks
+;============================================================================
+;============================================================================
+;Hitstates
+;============================================================================
+;Light hit
+[State -2 HIT Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 100)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8900;+(TeamSide-1)
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8900
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 100)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8901;+(TeamSide-1)
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8900
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 100)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8901;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8901
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 100)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8900;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8901
+
+[state -2 balance gauge filler p1]
+Type = Explod
+triggerall = teamside = 1
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 100)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8902;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8902
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8902
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+triggerall = teamside = 2
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 0) ^^ (stateno = 100)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8903;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8903
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8903
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8900
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8901
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8902
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8903
+;------------------------------------------------------------------------------------
+;Medium Hit
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 100)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8904;+(TeamSide-1)
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8904
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 100)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8905;+(TeamSide-1)
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8904
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 100)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8905;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8905
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 100)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8904;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8905
+
+[state -2 balance gauge filler p1]
+Type = Explod
+triggerall = teamside = 1
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 100)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8906;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8906
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8906
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+triggerall = teamside = 2
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 1) ^^ (stateno = 100)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8907;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8907
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8907
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8904
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8905
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8906
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8907
+;------------------------------------------------------------------------------------
+;Heavy Hit
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = 1
+Triggerall = (stateno != [5080,5150])
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 100)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8908;+(TeamSide-1)
+PosType = left
+Pos = 121, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8908
+
+[State -2 Balance gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+triggerall = facing = -1
+Triggerall = (stateno != [5080,5150])
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 100)
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8909;+(TeamSide-1)
+PosType = left
+Pos = 24, 174 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8908
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = -1
+Triggerall = (stateno != [5080,5150])
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 100)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8909;+(TeamSide-1)
+PosType = left
+Pos = 197, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8909
+
+[State -2 Balance gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+triggerall = facing = 1
+Triggerall = (stateno != [5080,5150])
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 100)
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8908;+(TeamSide-1)
+PosType = left
+Pos = 294, 174
+ownpal = 1
+removetime = -1
+scale = 0.3,0.25
+;scale = 0.38,0.32
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8909
+
+[state -2 balance gauge filler p1]
+Type = Explod
+triggerall = teamside = 1
+Triggerall = (stateno != [5080,5150])
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 100)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8910;+(TeamSide-1)
+PosType = Left
+Pos = 73, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8910
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8910
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 balance gauge filler p2]
+Type = Explod
+triggerall = teamside = 2
+Triggerall = (stateno != [5080,5150])
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 98)
+trigger1 = (gethitvar(animtype) = 2) ^^ (stateno = 100)
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable 
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8911;+(TeamSide-1)
+PosType = Left
+Pos = 245, 174
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.3,0.25 ;1280x720 size
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8911
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+trigger1 = 1
+ID = 8911
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8908
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8909
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8910
+[State -2 remove base]
+type = removeexplod
+trigger1 = stateno = 0
+trigger2 = gethitvar(hitshaketime) = 0
+ID = 8911
+
+;===========================================================================
+;GRAPPLING GAGUE EXPLODS
+;---------------------------------------------------------------------------
+
+;---------------------------------------------------------------------------
+;removal of transition gague
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6998,6999]
+ID = 8700
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6998,6999]
+ID = 8701
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6998,6999]
+ID = 8702
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6998,6999]
+ID = 8703
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6998,6999]
+ID = 8704
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6998,6999]
+ID = 8705
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8710
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8711
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8712
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8713
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8714
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8715
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8716
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8717
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8718
+[State -2 Removal of transition gague]
+type = removeExplod
+trigger1 = stateno != [6101,6103]
+ID = 8719
+
+;---------------------------------------------------------------------------
+;Grappling Gague itself
+[State -2 Grapple gauge outer shell p1]
+type = Explod
+triggerall = teamside = 1
+;triggerall = facing = 1
+triggerall = (stateno = [6000,6099])
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8000) = 0
+trigger1 = NumExplod(8006) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+anim = 8006;+(TeamSide-1)
+PosType = left
+Pos = 160, 156 ;1280x720 size
+ownpal = 1
+removetime = -1
+scale = 0.27,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8006
+
+[State -2 Grapple gauge outer shell p2]
+type = Explod
+triggerall = teamside = 2
+;triggerall = facing = -1
+triggerall = (stateno = [6000,6099])
+trigger1 = RoundState >= 0
+trigger1 = NumExplod(8001) = 0
+trigger1 = NumExplod(8007) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+anim = 8007;+(TeamSide-1)
+PosType = left
+Pos = 159, 178 ;1280x720 size
+;Pos = IfElse(TeamSide=1,183,136), 230 ;640x480 size
+ownpal = 1
+removetime = -1
+scale = 0.27,0.25 ;1280x720 size
+;scale = 0.38,0.32 ;640x480 size
+bindtime = -1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+sprpriority = 6
+ID = 8007
+
+[state -2 Grapple gauge filler arrow p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = [6000,6099])
+trigger1 = NumExplod(8002) = 0
+trigger1 = NumExplod(8008) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8008;+(TeamSide-1)
+PosType = Left
+Pos = 152, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.27,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8008
+Persistent = 1
+
+[state -2 Grapple gauge filler staff p1]
+Type = Explod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = [6000,6099])
+trigger1 = NumExplod(8002) = 0
+trigger1 = NumExplod(8012) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+Anim = 8012;+(TeamSide-1)
+PosType = Left
+Pos = 151, 157
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.27,0.25 ;1280x720 size 
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8012
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 1
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = [6000,6099])
+trigger1 = 1
+ID = 8012
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+[state -2 Grapple gauge filler arrow p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = [6000,6099])
+trigger1 = NumExplod(8003) = 0
+trigger1 = NumExplod(8009) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8009;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.27,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8009
+Persistent = 1
+
+[state -2 Grapple gauge filler arrow p2]
+Type = Explod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0 ; set this to the amount of the variable
+triggerall = (stateno = [6000,6099])
+trigger1 = NumExplod(8003) = 0
+trigger1 = NumExplod(8013) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0
+Anim = 8013;+(TeamSide-1)
+PosType = Left
+Pos = 167, 177
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+Scale = 0.27,0.25
+;Scale = 0.38,0.33
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 5
+ID = 8013
+Persistent = 1
+
+[state -2 filler scaling]
+type = modifyExplod
+triggerall = teamside = 2
+TriggerAll = Roundstate >= 0
+Triggerall = Var(47) >= 0
+triggerall = (stateno = [6000,6099])
+trigger1 = 1
+ID = 8013
+scale = 0.00+((0.3*(var(47)))/160),0.25
+IgnoreHitPause = 1
+Persistent = 1
+
+;---------------------------------------------------------------------------
+;destroy grapple gague
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8006
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8007
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8008
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8009
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8012
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8013
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8006
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8007
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8008
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8009
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8012
+[State -2 destory grapple gague]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8013
+
+;---------------------------------------------------------------------------
+;Offense & defense markers
+[state -2 Offense marker p1]
+type = explod
+triggerall = teamside = 1
+triggerall = (stateno = [6000,6049])
+trigger1 = numexplod(8006) = 1
+trigger1 = numexplod(8010) = 0
+anim = 8010
+postype = left
+pos = 7, 164
+ID = 8010
+scale = 0.27,0.25
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 7
+persistent = 1
+
+[state -2 defense marker p1]
+type = explod
+triggerall = teamside = 1
+triggerall = (stateno = [6050,6099])
+trigger1 = numexplod(8006) = 1
+trigger1 = numexplod(8011) = 0
+anim = 8011
+postype = left
+pos = 7, 164
+ID = 8011
+scale = 0.27,0.25
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 7
+persistent = 1
+
+[state -2 Offense marker p2]
+type = explod
+triggerall = teamside = 2
+triggerall = (stateno = [6000,6049])
+trigger1 = numexplod(8007) = 1
+trigger1 = numexplod(8010) = 0
+anim = 8010
+postype = left
+pos = 281, 175
+ID = 8010
+scale = 0.27,0.25
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 7
+persistent = 1
+
+[state -2 defense marker p2]
+type = explod
+triggerall = teamside = 2
+triggerall = (stateno = [6050,6099])
+trigger1 = numexplod(8007) = 1
+trigger1 = numexplod(8011) = 0
+anim = 8011
+postype = left
+pos = 281, 175
+ID = 8011
+scale = 0.27,0.25
+BindTime = -1
+RemoveTime = -1
+Ownpal = 1
+IgnoreHitPause = 1
+SuperMoveTime = 99999
+PauseMoveTime = 99999
+SprPriority = 7
+persistent = 1
+
+;---------------------------------------------------------------------------
+;destroy offense & defense markers
+[State -2 destory offense marker]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8010
+[State -2 destory offense marker]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8010
+[State -2 destory defense marker]
+type = removeexplod
+trigger1 = stateno = 0
+ID = 8011
+[State -2 destory defense marker]
+type = removeexplod
+trigger1 = stateno = [6100,6103]
+ID = 8011

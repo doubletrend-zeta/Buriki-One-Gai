@@ -1,0 +1,85 @@
+Source data; can be ignored
+
+p1 outer
+8000
+8100
+8104
+8110
+8114
+8200
+8900
+8904
+8908
+
+trigger1 = NumExplod(8000) = 0
+trigger1 = Numexplod(8100) = 0
+trigger1 = Numexplod(8104) = 0
+trigger1 = Numexplod(8110) = 0
+trigger1 = Numexplod(8114) = 0
+trigger1 = Numexplod(8200) = 0
+trigger1 = Numexplod(8900) = 0
+trigger1 = Numexplod(8904) = 0
+trigger1 = Numexplod(8908) = 0
+
+p2 outer
+8001
+8101
+8105
+8111
+8115
+8201
+8901
+8905
+8909
+
+trigger1 = NumExplod(8001) = 0
+trigger1 = Numexplod(8101) = 0
+trigger1 = Numexplod(8105) = 0
+trigger1 = Numexplod(8111) = 0
+trigger1 = Numexplod(8115) = 0
+trigger1 = Numexplod(8201) = 0
+trigger1 = Numexplod(8901) = 0
+trigger1 = Numexplod(8905) = 0
+trigger1 = Numexplod(8909) = 0
+
+p1 filler
+8002
+8102
+8106
+8112
+8116
+8202
+8902
+8906
+8910
+
+trigger1 = NumExplod(8002) = 0
+trigger1 = Numexplod(8102) = 0
+trigger1 = Numexplod(8106) = 0
+trigger1 = Numexplod(8112) = 0
+trigger1 = Numexplod(8116) = 0
+trigger1 = Numexplod(8202) = 0
+trigger1 = Numexplod(8902) = 0
+trigger1 = Numexplod(8906) = 0
+trigger1 = Numexplod(8910) = 0
+
+p2 filler
+8003
+8103
+8107
+8113
+8117
+8203
+8903
+8907
+8911
+
+trigger1 = NumExplod(8003) = 0
+trigger1 = Numexplod(8103) = 0
+trigger1 = Numexplod(8107) = 0
+trigger1 = Numexplod(8113) = 0
+trigger1 = Numexplod(8117) = 0
+trigger1 = Numexplod(8203) = 0
+trigger1 = Numexplod(8903) = 0
+trigger1 = Numexplod(8907) = 0
+trigger1 = Numexplod(8911) = 0

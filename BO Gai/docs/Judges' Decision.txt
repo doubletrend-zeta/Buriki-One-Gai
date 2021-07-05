@@ -1,0 +1,28 @@
+This feature takes the form of two variables: 40, which calculates P1's score, and 41, which calculates
+P2's score. The system is only active for one character to prevent it from overriding itself if two
+characters with it fight. It's always active for the home team (P1), but there's an optional trigger
+in the varset state (located in the -2) that's for if you wanted to play arcade as a Buriki One
+character. (In arcade mode the AI is home team, so you just need to make sure your void the first
+trigger and activate the second for teamside = 1)
+
+When the Judges' Decision is active, you gain points for each attack. All attacks are worth 100 points,
+except for grabs and grapples, and are scaled based on the type of attack. Grabs always give 300 points,
+and grapples give 400 times the hitcount of the grapple (which is how long you hold the grapple before
+your gauge runs out or your opponent breaks it. Grapples are based on a system where you input follow up 
+commands during the grapple. Each follow up command counts as one hit and lowers the grappling bar each
+time. When your bar is out the grapple ends.)
+
+At the end of the round by time out, the scores of the variables are compared. If var(40) is higher, then
+P1 wins. If var(41) is higher, then P2 wins.
+
+IMPORTANT INFORMATION ABOUT COMPATABILITY
+The Special Custom States file (name is sorta misleading, it's just a file of mandatory state numbers)
+lists the states that affect the score system. These are non-fluctuating, meaning attacks in Buriki One
+characters with both the Judges' Decision and Balance Gauge must always be within those boundaries.
+If they're not, this happens: www.youtube.com/watch?v=fx2gK1Mv8BU
+
+The Judges' Decision system is designed around these states, meaning that if you fight against characters
+that break the rules set down in the Special Custom States file, there's no guarantee the variables will
+calculate correctly.
+
+(originally written on 1/3/13 in the Command & common log) 

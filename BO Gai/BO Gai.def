@@ -1,0 +1,34 @@
+[Info]
+name ="Buriki One Gai Tendo"
+displayname ="Gai Tendo"
+versiondate =1,31,2015
+mugenversion =1.0
+author ="Bannana"
+pal.defaults =1
+localcoord = 320,240
+[Files]
+sprite =Gai.sff
+anim =Gai.air
+sound =Gai.snd
+cmd =Gai.cmd
+cns =Basics.cns
+stcommon =common1.cns
+st = Basics.cns
+st2 = Throwing States.cns
+st3 = Specials.cns
+st4 = Hypers.cns
+st5 = Grappling States.cns
+st6 = Balance GaugeM.cns
+st7 = Misc.cns
+pal1=Gai.act
+pal2=Gai1.act
+pal3=
+pal4=
+pal5=
+pal6=
+pal7=
+pal8=
+
+[Arcade]
+intro.storyboard =
+ending.storyboard =
